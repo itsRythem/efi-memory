@@ -21,6 +21,7 @@ jobs:
         run: |
           cd driver
           make
+          ls -R
           mkdir -p ../build/
           mv output_files_here ../build/
           
