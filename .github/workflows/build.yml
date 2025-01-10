@@ -23,7 +23,7 @@ jobs:
           make
           ls -R
           mkdir -p ../build/
-          mv output_files_here ../build/
+          mv ./ ../build/
           
       - name: Upload artifacts
         uses: actions/upload-artifact@v3.1.2
