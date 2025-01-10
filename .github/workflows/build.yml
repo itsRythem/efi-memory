@@ -22,4 +22,5 @@ jobs:
       - name: Build EFI driver
         run: |
           cd driver
+          make clean
           make
