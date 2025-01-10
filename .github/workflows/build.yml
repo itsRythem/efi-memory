@@ -20,3 +20,9 @@ jobs:
           sudo apt install gnu-efi build-essential
           make clean
           make
+
+      - name: Artifacts
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: ${{github.event.repository.name}}-${{matrix.arch}}
+          path: build-${{matrix.arch}}/Release/*
