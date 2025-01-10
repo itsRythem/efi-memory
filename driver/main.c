@@ -314,7 +314,7 @@ efi_main(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
                                 TPL_NOTIFY,
                                 SetVirtualAddressMapEvent,
                                 NULL,
-                                VirtualGuid,
+                                &VirtualGuid,
                                 &NotifyEvent);
 
     // Return if event create failed
@@ -329,7 +329,7 @@ efi_main(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
                                 TPL_NOTIFY,
                                 ExitBootServicesEvent,
                                 NULL,
-                                ExitGuid,
+                                &ExitGuid,
                                 &ExitEvent);
 
     if (EFI_ERROR(status)) 
