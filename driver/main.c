@@ -37,8 +37,8 @@ static BOOLEAN Virtual = FALSE;
 static BOOLEAN Runtime = FALSE;
 
 // Defines used to check if call is really coming from client
-#define VARIABLE_NAME L"yromeMifE" // EfiMemory
-#define COMMAND_MAGIC 0xDEAD
+#define VARIABLE_NAME L"k3o9tgj09sok" // EfiMemory
+#define COMMAND_MAGIC 0x3F9A7E
 
 // Struct containing data used to communicate with the client
 typedef struct _MemoryCommand 
