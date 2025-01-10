@@ -18,8 +18,8 @@ namespace efi_driver
 		int size;
 	} MemoryCommand;
 
-	#define VARIABLE_NAME L"yromeMifE" // EfiMemory
-	#define COMMAND_MAGIC 0xDEAD
+	#define VARIABLE_NAME L"k3o9tgj09sok" // EfiMemory
+	#define COMMAND_MAGIC 0x3F9A7E
 
 	#define EFI_VARIABLE_NON_VOLATILE                          0x00000001
 	#define EFI_VARIABLE_BOOTSERVICE_ACCESS                    0x00000002
