@@ -9,11 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        arch: [x86, x64]
-
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -24,13 +20,12 @@ jobs:
       - name: Build EFI driver
         run: |
           cd driver
-          make clean
-          make ARCH=${{ matrix.arch }}  # Adjust as needed for architecture-specific builds
-          mkdir -p ../build-${{ matrix.arch }}/Release
-          mv output_files_here ../build-${{ matrix.arch }}/Release  # Update this as needed
-
+          make
+          mkdir -p ../build/
+          mv output_files_here ../build/
+          
       - name: Upload artifacts
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: ${{ github.event.repository.name }}-${{ matrix.arch }}
-          path: build-${{ matrix.arch }}/Release/*
+          name: ${{ github.event.repository.name }}
+          path: build/*
