@@ -12,7 +12,7 @@ __attribute__((section(".text"))) char DriverBuffer[DRIVER_SIZE]; // It has to b
 
 // Our protocol GUID (should be different for every driver)
 static const EFI_GUID ProtocolGuid
-    = { 0x2b479eea, 0x0ecf, 0x4a46, {0x96, 0x84, 0x8f, 0x14, 0xed, 0x92, 0xd9, 0xec} };
+    = { 0x12345678, 0x9abc, 0xdef0, { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 } };
 
 // VirtualAddressMap GUID (gEfiEventVirtualAddressChangeGuid)
 static const EFI_GUID VirtualGuid
@@ -185,7 +185,6 @@ SetVirtualAddressMapEvent(
     RT->ConvertPointer(0, &oConvertPointer);
     RT->ConvertPointer(0, &oGetVariable);
     RT->ConvertPointer(0, &oGetNextVariableName);
-    //RT->ConvertPointer(0, &oSetVariable);
     RT->ConvertPointer(0, &oGetNextHighMonotonicCount);
     RT->ConvertPointer(0, &oResetSystem);
     RT->ConvertPointer(0, &oUpdateCapsule);
@@ -303,7 +302,7 @@ efi_main(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
     // Return if interface failed to register
     if (EFI_ERROR(status)) 
     {
-        Print(L"Can't register interface: %d\n", status);
+        Print(L"Cant register interface: %d\n", status);
         return status;
     }
 
@@ -321,7 +320,7 @@ efi_main(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
     // Return if event create failed
     if (EFI_ERROR(status)) 
     {
-        Print(L"Can't create event (SetVirtualAddressMapEvent): %d\n", status);
+        Print(L"Cant create event (SetVirtualAddressMapEvent): %d\n", status);
         return status;
     }
 
@@ -333,17 +332,14 @@ efi_main(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
                                 ExitGuid,
                                 &ExitEvent);
 
-    // Return if event create failed (yet again)
     if (EFI_ERROR(status)) 
     {
-        Print(L"Can't create event (ExitBootServicesEvent): %d\n", status);
+        Print(L"Cant create event (ExitBootServicesEvent): %d\n", status);
         return status;
     }
 
-    // Hook SetVariable (should not fail)
     oSetVariable = (EFI_SET_VARIABLE)SetServicePointer(&RT->Hdr, (VOID**)&RT->SetVariable, (VOID**)&HookedSetVariable);
 
-    // Hook all the other runtime services functions
     oGetTime = (EFI_GET_TIME)SetServicePointer(&RT->Hdr, (VOID**)&RT->GetTime, (VOID**)&HookedGetTime);
     oSetTime = (EFI_SET_TIME)SetServicePointer(&RT->Hdr, (VOID**)&RT->SetTime, (VOID**)&HookedSetTime);
     oGetWakeupTime = (EFI_SET_TIME)SetServicePointer(&RT->Hdr, (VOID**)&RT->GetWakeupTime, (VOID**)&HookedGetWakeupTime);
@@ -352,16 +348,11 @@ efi_main(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
     oConvertPointer = (EFI_CONVERT_POINTER)SetServicePointer(&RT->Hdr, (VOID**)&RT->ConvertPointer, (VOID**)&HookedConvertPointer);
     oGetVariable = (EFI_GET_VARIABLE)SetServicePointer(&RT->Hdr, (VOID**)&RT->GetVariable, (VOID**)&HookedGetVariable);
     oGetNextVariableName = (EFI_GET_NEXT_VARIABLE_NAME)SetServicePointer(&RT->Hdr, (VOID**)&RT->GetNextVariableName, (VOID**)&HookedGetNextVariableName);
-    //oSetVariable = (EFI_SET_VARIABLE)SetServicePointer(&RT->Hdr, (VOID**)&RT->SetVariable, (VOID**)&HookedSetVariable);
     oGetNextHighMonotonicCount = (EFI_GET_NEXT_HIGH_MONO_COUNT)SetServicePointer(&RT->Hdr, (VOID**)&RT->GetNextHighMonotonicCount, (VOID**)&HookedGetNextHighMonotonicCount);
     oResetSystem = (EFI_RESET_SYSTEM)SetServicePointer(&RT->Hdr, (VOID**)&RT->ResetSystem, (VOID**)&HookedResetSystem);
     oUpdateCapsule = (EFI_UPDATE_CAPSULE)SetServicePointer(&RT->Hdr, (VOID**)&RT->UpdateCapsule, (VOID**)&HookedUpdateCapsule);
     oQueryCapsuleCapabilities = (EFI_QUERY_CAPSULE_CAPABILITIES)SetServicePointer(&RT->Hdr, (VOID**)&RT->QueryCapsuleCapabilities, (VOID**)&HookedQueryCapsuleCapabilities);
     oQueryVariableInfo = (EFI_QUERY_VARIABLE_INFO)SetServicePointer(&RT->Hdr, (VOID**)&RT->QueryVariableInfo, (VOID**)&HookedQueryVariableInfo);
-
-    // Print confirmation text
-    Print(L"efi-memory (build on: %a in: %a)\n", __DATE__, __TIME__);
-    Print(L"https://github.com/SamuelTulach/efi-memory\n");  
 
     return EFI_SUCCESS;
 }
