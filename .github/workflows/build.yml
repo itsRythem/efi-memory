@@ -17,5 +17,6 @@ jobs:
       - name: Build EFI driver
         run: |
           cd driver
+          sudo apt install gnu-efi build-essential
           make clean
           make
