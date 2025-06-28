@@ -1,23 +1,30 @@
-name: C/C++ CI
+name: Build EFI Driver
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: configure
-      run: ./configure
-    - name: make
+    - name: Checkout source
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y build-essential gcc-aarch64-linux-gnu gcc-x86-64-linux-gnu
+
+    - name: Build with Makefile
       run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: efi-driver
+        path: ./output/
