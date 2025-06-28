@@ -20,11 +20,11 @@ jobs:
         sudo apt update
         sudo apt install -y build-essential gcc-aarch64-linux-gnu gcc-x86-64-linux-gnu
 
-    - name: Build with Makefile
-      run: make
+    - name: Build the driver
+      run: make -C driver
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: efi-driver
-        path: ./output/
+        path: driver/*.efi
