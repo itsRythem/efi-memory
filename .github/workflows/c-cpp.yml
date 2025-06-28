@@ -18,7 +18,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install -y build-essential gcc-aarch64-linux-gnu gcc-x86-64-linux-gnu
+        sudo apt install -y build-essential gnu-efi
 
     - name: Build the driver
       run: make -C driver
