@@ -1,32 +1,20 @@
-ARCH            = $(shell uname -m | sed s,i[3456789]86,ia32,)
+ARCH     := x86_64
+TARGET   := memory.efi
+OBJS     := main.o
 
-OBJS            = main.o
-TARGET          = memory.efi
+EFIINC   := /usr/include/efi
+EFIARCH  := $(EFIINC)/$(ARCH)
 
-EFIINC          = /usr/include/efi
-EFIINCS         = -I$(EFIINC) -I$(EFIINC)/$(ARCH) -I$(EFIINC)/protocol
-LIB32           = /usr/lib32
-LIB64           = /usr/lib
+EFILIBDIR := /usr/lib/$(ARCH)-linux-gnu/gnu-efi
+EFI_CRT_OBJS := $(EFILIBDIR)/crt0-efi-$(ARCH).o
+EFI_LDS      := $(EFILIBDIR)/elf_$(ARCH)_efi.lds
 
-CFLAGS          = $(EFIINCS) -fno-stack-protector -fpic \
-		  -fshort-wchar -mno-red-zone -Wall
+CFLAGS := -I$(EFIINC) -I$(EFIARCH) -I$(EFIINC)/protocol \
+	 -fno-stack-protector -fpic -fshort-wchar -mno-red-zone \
+	 -Wall -Wno-incompatible-pointer-types
 
-ifeq ($(ARCH),x86_64)
-  CFLAGS += -DEFI_FUNCTION_WRAPPER
-  LIB           = $(LIB64)
-  EFILIB        = $(LIB64)
-endif
-
-ifeq ($(ARCH),ia32)
-  LIB           = $(LIB32)
-  EFILIB        = $(LIB32)
-endif
-
-EFI_CRT_OBJS    = $(EFILIB)/crt0-efi-$(ARCH).o
-EFI_LDS         = $(EFILIB)/elf_$(ARCH)_efi.lds
-
-LDFLAGS         = -nostdlib -znocombreloc -T $(EFI_LDS) -shared \
-		  -Bsymbolic -L $(EFILIB) -L $(LIB) $(EFI_CRT_OBJS) 
+LDFLAGS := -nostdlib -znocombreloc -T $(EFI_LDS) -shared \
+	   -Bsymbolic -L$(EFILIBDIR) $(EFI_CRT_OBJS)
 
 all: $(TARGET)
 
@@ -36,7 +24,10 @@ memory.so: $(OBJS)
 %.efi: %.so
 	objcopy -j .text -j .sdata -j .data -j .dynamic \
 		-j .dynsym  -j .rel -j .rela -j .reloc \
-		--target=efi-rtdrv-$(ARCH) $^ $@
+		--target=efi-app-$(ARCH) $^ $@
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f memory.efi memory.so main.o *~
+	rm -f $(TARGET) memory.so $(OBJS) *~
